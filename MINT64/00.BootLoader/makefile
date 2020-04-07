@@ -1,6 +1,6 @@
 all: BootLoader.bin
 
-BootLoader.bin: Bootloader.asm
+BootLoader.bin: BootLoader.asm
 	nasm -o BootLoader.bin BootLoader.asm
 
 clean:

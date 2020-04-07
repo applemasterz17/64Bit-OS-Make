@@ -34,7 +34,7 @@ START:
 .MESSAGEEND:
 	jmp $
 
-MESSAGE1:	db 'f1naly operating system complete', 0;
+MESSAGE1:	db 'First Booting is Complete', 0;
 
 times 510 - ( $ - $$ )	db	0x00
 db 0x55

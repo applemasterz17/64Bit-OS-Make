@@ -9,7 +9,7 @@ BootLoader:
 	@echo ========== Build Complete ==========
 	@echo
 
-Disk.img: 00.BootLoader/Bootloader.bin
+Disk.img: 00.BootLoader/BootLoader.bin
 	@echo
 	@echo ========== Disk Image Build Start ==========
 	@echo
