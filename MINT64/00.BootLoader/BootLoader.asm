@@ -107,7 +107,7 @@ READEND:
     ; Print OS Image Loading Complete
     push LOADINGCOMPLETEMESSAGE
     push 1
-    push 10
+    push 20
     call PRINTMESSAGE
     add sp, 6
 

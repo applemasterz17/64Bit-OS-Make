@@ -9,7 +9,7 @@ jmp 0x1000:START ; CS 세그먼트 레지스터에 0x1000 을 복사, START 레�
 ;   Environment Value
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 SECTORCOUNT:    dw  0x0000 ; 현재 실행 중인 섹터 번호 저장 
-TOTALSECTORCOUNT    equ 1024 ; 총 섹터 수, 최대 1152 섹터 까지 가능 
+TOTALSECTORCOUNT    equ 100 ; 총 섹터 수, 최대 1152 섹터 까지 가능 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   Code Section 
@@ -28,7 +28,7 @@ START:
         mov ax, 2
         mul word [ SECTORCOUNT ]
         mov si, ax 
-        mov byte [ es: si + ( 160 * 3 ) ], '0' + ( i % 10)
+        mov byte [ es: si + ( 160 * 2 ) ], '0' + ( i % 10)
         add word [ SECTORCOUNT ], 1    
 
         %if i == TOTALSECTORCOUNT
