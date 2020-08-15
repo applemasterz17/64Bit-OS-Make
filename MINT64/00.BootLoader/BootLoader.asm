@@ -15,10 +15,10 @@ TOTALSECTORCOUNT:   dw  1024
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 START:
     ; Initialize DS segment(boot loader), ES segment(video memory)
-    mov ax, 0x07C0
-    mov ds, ax
-    mov ax, 0xB800
-    mov es, ax
+    mov ax, 0x07C0 
+    mov ds, ax ; DS = 0x07C0 * 16 = 0x7C00
+    mov ax, 0xB800 
+    mov es, ax ; ES = 0xB800 * 16 = 0xB8000
 
     ; Make Stack 0x0000:0000 ~ 0x0000:FFFF, 64KB 
     mov ax, 0x0000
