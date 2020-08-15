@@ -1,6 +1,6 @@
 all: VirtualOS.bin
 
-BootLoader.bin: VirtualOS.asm
+VirtualOS.bin: VirtualOS.asm
 	nasm -o VirtualOS.bin VirtualOS.asm
 
 clean:
