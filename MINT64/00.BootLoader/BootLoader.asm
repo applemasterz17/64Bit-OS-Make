@@ -56,8 +56,7 @@ RESETDISK:
     mov dl, 0
     int 0x13
     jc HANDLEDISKERROR
-
-SETREADDATA:
+    
     ; Set Destination Address to ES segment
     mov si, 0x1000
     mov es, si
