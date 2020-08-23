@@ -6,13 +6,15 @@ SECTION .text
 jmp 0x07c0:START
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;   Environment Value
+;   Environment Variable
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TOTALSECTORCOUNT:   dw  1024
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   Code Section 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;; Start Real Mode ;;;;;
 START:
     ; Initialize DS segment(boot loader), ES segment(video memory)
     mov ax, 0x07C0 
@@ -112,6 +114,25 @@ READEND:
 
     ; Jump to Loaded OS Image
     jmp 0x1000:0x0000
+
+;;;;; Start Protected Mode ;;;;;
+CODEDESCRIPTOR:
+    ; Create Code Segment Descriptor 
+    dw 0xFFFF ; Limit [15:0]                         (2byte)
+    dw 0x0000 ; Base [15:0]                          (2byte)
+    db 0x00 ; Base [23:16]                           (1byte)
+    db 0x9A ; P=1, DPL=0, Code Segment:Execute/Read  (1byte)
+    db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
+    db 0x00 ; Base [31:24]                           (1byte)
+
+DATADESCRIPTOR:
+    ; Create Data Segment Discriptor 
+    dw 0xFFFF ; Limit [15:0]                         (2byte)
+    dw 0x0000 ; Base [15:0]                          (2byte)
+    db 0x00 ; Base [23:16]                           (1byte)
+    db 0x92 ; P=1, DPL=0, Data Segment:Read/Write    (1byte)
+    db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
+    db 0x00 ; Base [31:24]                           (1byte)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   Function Code Section 
