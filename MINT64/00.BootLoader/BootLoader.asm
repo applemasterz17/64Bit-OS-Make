@@ -22,7 +22,7 @@ START:
     mov ax, 0xB800 
     mov es, ax ; ES = 0xB800 * 16 = 0xB8000
 
-    ; Make Stack 0x0000:0000 ~ 0x0000:FFFF, 64KB 
+    ; Create Stack 0x0000:0000 ~ 0x0000:FFFF, 64KB 
     mov ax, 0x0000
     mov ss, ax
     mov sp, 0xFFFE
@@ -115,25 +115,6 @@ READEND:
     ; Jump to Loaded OS Image
     jmp 0x1000:0x0000
 
-;;;;; Start Protected Mode ;;;;;
-CODEDESCRIPTOR:
-    ; Create Code Segment Descriptor 
-    dw 0xFFFF ; Limit [15:0]                         (2byte)
-    dw 0x0000 ; Base [15:0]                          (2byte)
-    db 0x00 ; Base [23:16]                           (1byte)
-    db 0x9A ; P=1, DPL=0, Code Segment:Execute/Read  (1byte)
-    db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
-    db 0x00 ; Base [31:24]                           (1byte)
-
-DATADESCRIPTOR:
-    ; Create Data Segment Discriptor 
-    dw 0xFFFF ; Limit [15:0]                         (2byte)
-    dw 0x0000 ; Base [15:0]                          (2byte)
-    db 0x00 ; Base [23:16]                           (1byte)
-    db 0x92 ; P=1, DPL=0, Data Segment:Read/Write    (1byte)
-    db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
-    db 0x00 ; Base [31:24]                           (1byte)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   Function Code Section 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -180,7 +161,7 @@ PRINTMESSAGE:
     cmp cl, 0
     je .MESSAGEEND
 
-    ; IF Not Null, Print Message
+    ; If Not NULL, Print and Set Counter
     mov byte [ es: di ], cl
     add si, 1
     add di, 2
