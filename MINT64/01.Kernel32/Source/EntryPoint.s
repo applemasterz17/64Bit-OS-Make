@@ -45,7 +45,9 @@ PROTECTEDMODE:
     call PRINTMESSAGE
     add esp, 12
 
-    jmp $
+    ; Jump 0x10200, There is C Lang Kernel Code
+    ; CS Segment Selector -> Kernel Code Discriptor(0x08)
+    jmp dword 0x08: 0x10200
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   Function Code Section 
