@@ -78,16 +78,16 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int AdjustInSectorSize(int iFd, int iSourceSize)
-{
-    return iSectorCount;
-}
+// int AdjustInSectorSize(int iFd, int iSourceSize)
+// {
+//     return iSectorCount;
+// }
 
-void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
-{
-}
+// void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
+// {
+// }
 
-int CopyFile(int iSourceFd, int iTargetFd)
-{
-    return iSourceFileSize;
-}
+// int CopyFile(int iSourceFd, int iTargetFd)
+// {
+//     return iSourceFileSize;
+// }
