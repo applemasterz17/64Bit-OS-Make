@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
     if ((iTargetFd = open("Disk.img", O_RDWR | O_CREAT | O_TRUNC | S_IREAD | S_IWRITE)) == -1)
     {
-        fprintf(stderr, "[Error] ImageMaker BootLoader.bin Kernel32.bin\n");
+        fprintf(stderr, "[Error] Disk.img open fail.\n");
         exit(-1);
     }
 
