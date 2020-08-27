@@ -94,7 +94,7 @@ int AdjustInSectorSize(int iFd, int iSourceSize)
         printf("[INFO] File size [%lu] and fill [%u] byte\n", iSourceSize, iAdjustSizeToSector);
         for (i = 0; i < iAdjustSizeToSector; i++)
         {
-            write(iFd, % cCh, 1);
+            write(iFd, &cCh, 1);
         }
     }
     else
