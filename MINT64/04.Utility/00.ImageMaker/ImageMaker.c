@@ -78,16 +78,78 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-// int AdjustInSectorSize(int iFd, int iSourceSize)
-// {
-//     return iSectorCount;
-// }
+int AdjustInSectorSize(int iFd, int iSourceSize)
+{
+    int i;
+    int iAdjustSizeToSector;
+    char cCh;
+    int iSectorCount;
 
-// void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
-// {
-// }
+    iAdjustSizeToSector = iSourceSize % BYTESOFSECTOR;
+    cCh = 0x00;
 
-// int CopyFile(int iSourceFd, int iTargetFd)
-// {
-//     return iSourceFileSize;
-// }
+    if (iAdjustSizeToSector != 0)
+    {
+        iAdjustSizeToSector = 512 - iAdjustSizeToSector;
+        printf("[INFO] File size [%lu] and fill [%u] byte\n", iSourceSize, iAdjustSizeToSector);
+        for (i = 0; i < iAdjustSizeToSector; i++)
+        {
+            write(iFd, % cCh, 1);
+        }
+    }
+    else
+    {
+        printf("[INFO] File size is aligned 512 byte\n");
+    }
+
+    // Return Total Sector Number
+    iSectorCount = (iSourceSize + iAdjustSizeToSector) / BYTESOFSECTOR;
+    return iSectorCount;
+}
+
+void WriteKernelInformation(int iTargetFd, int iKernelSectorCount)
+{
+    unsigned short usData;
+    long lPosition;
+
+    // Change Current TargetFd's Location
+    lPosition = lseek(iTargetFd, 5, SEEK_SET);
+    if (lPosition == -1)
+    {
+        fprintf(stderr, "lseek fail. Return value = %d, errno = %d, %d\n", lPosition, errno, SEEK_SET);
+        exit(-1);
+    }
+
+    usData = (unsigned short)iKernelSectorCount;
+    write(iTargetFd, &usData, 2);
+
+    printf("[INFO] Total sector count except boot loader [%d]\n", iKernelSectorCount);
+}
+
+int CopyFile(int iSourceFd, int iTargetFd)
+{
+    int iSourceFileSize;
+    int iRead;
+    int iWrite;
+    char vcBuffer[BYTESOFSECTOR];
+
+    iSourceFileSize = 0;
+    while (1)
+    {
+        iRead = read(iSourceFd, vcBuffer, sizeof(vcBuffer));
+        iWrite = write(iTargetFd, vcBuffer, iRead);
+
+        if (iRead != iWrite)
+        {
+            fprintf(stderr, "[ERROR] iRead != iWrite.. \n");
+            exit(-1);
+        }
+        iSourceFileSize += iRead;
+
+        if (iRead != sizeof(vcBuffer))
+        {
+            break;
+        }
+    }
+    return iSourceFileSize;
+}
