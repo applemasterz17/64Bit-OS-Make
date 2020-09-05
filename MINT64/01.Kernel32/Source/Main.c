@@ -1,10 +1,17 @@
 #include "Types.h"
 
+// 메시지 출력 함수 (CUI)
 void kPrintString(int iX, int iY, const char *pcString);
+// IA-32e 커널이 올라갈 공간을 0으로 초기화 하는 함수
 BOOL kInitializeKernel64Area(void);
+// 보호모드 설치된 메모리 크기 검사 함수 (4GB)
 BOOL kIsMemoryEnough(void);
 
-// Lower 32 Bit
+///////////////////////////////////////////////////////////////////////////
+//                              페이징에 사용                               //
+///////////////////////////////////////////////////////////////////////////
+
+// 페이지 엔트리 : 하위 32비트 용 속성 필드
 #define PAGE_FLAGS_P 0x00000001   // Present
 #define PAGE_FLAGS_RW 0x00000002  // Read/Write
 #define PAGE_FLAGS_US 0x00000004  // User/Supervisor
@@ -16,21 +23,23 @@ BOOL kIsMemoryEnough(void);
 #define PAGE_FLAGS_G 0x00000100   // Global
 #define PAGE_FLAGS_PAT 0x0001000  // Page Attribute Table Index
 
-// Upper 32 Bit
+//페이지 엔트리 : 상위 32비트 용 속성 필드
 #define PAGE_FLAGS_EXB 0x80000000 // Excute Disable
 
-// ETC
+// 페이지 엔트리 : 기타
 #define PAGE_FLAGS_DEFAULT (PAGE_FLAGS_P | PAGE_FLAGS_RW)
 
+// 페이지 엔트리 : 자료구조
 typedef struct pageTableEntryStruct
 {
-    // Lower Base Address + G + PAT + D + A + PCD + PWT + U/S + R/W + P
-    DWORD dwAttributeAndLowerBaseAddress;
-    // Upper Base Address +
-    DWORD dwUpperBaseAddressAndEXB;
+    DWORD dwAttributeAndLowerBaseAddress; // Addr + G + PAT + D + A + PCD + PWT + U/S + R/W + P
+    DWORD dwUpperBaseAddressAndEXB;       // Addr + EXB
 } PML4TENTRY, PDPTENTRY, PDENTRY, PTENTRY;
 
-// Main Function
+///////////////////////////////////////////////////////////////////////////
+//                              메인 함수                                  //
+///////////////////////////////////////////////////////////////////////////
+
 void Main(void)
 {
 
@@ -38,9 +47,7 @@ void Main(void)
 
     kPrintString(0, 3, "C Language Kernel Start.....................[Pass]");
 
-    ///////////////////////////////////////////////////////////////////////////
-    // [1] Check Minimum Memory Size
-    ///////////////////////////////////////////////////////////////////////////
+    // [1] Check Minimum Memory Size : 설치된 메모리 크기 검사 (4GB)
     kPrintString(0, 4, "Minimum Memory Size Check...................[    ]");
     if (kIsMemoryEnough() == FALSE)
     {
@@ -54,9 +61,7 @@ void Main(void)
         kPrintString(45, 4, "Pass");
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // [2] Initialize IA-32e Kernel Area
-    ///////////////////////////////////////////////////////////////////////////
+    // [2] Initialize IA-32e Kernel Area : IA-32e 영역 초기화
     kPrintString(0, 5, "IA-32e Kernel Area Initialize...............[    ]");
     if (kInitializeKernel64Area() == FALSE)
     {
@@ -65,13 +70,19 @@ void Main(void)
         while (1)
             ;
     }
-    kPrintString(45, 5, "Pass");
+    else
+    {
+        kPrintString(45, 5, "Pass");
+    }
 
     while (1)
         ;
 }
 
-// String Printing Function
+///////////////////////////////////////////////////////////////////////////
+//                              함수 영역                                  //
+///////////////////////////////////////////////////////////////////////////
+
 void kPrintString(int iX, int iY, const char *pcString)
 {
     CHARACTER *pstScreen = (CHARACTER *)0xB8000;
@@ -103,7 +114,6 @@ BOOL kInitializeKernel64Area(void)
     return TRUE;
 }
 
-// 커널 메모리를 확인하는 프로그램
 BOOL kIsMemoryEnough(void)
 {
     DWORD *pdwCurrentAddress;
