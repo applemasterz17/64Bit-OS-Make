@@ -124,7 +124,7 @@ READEND:
 HANDLEDISKERROR:
     push DISKERRORMESSAGE
     push 1
-    push 20`
+    push 20
     call PRINTMESSAGE
     
     jmp $
