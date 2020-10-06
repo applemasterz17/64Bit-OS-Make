@@ -3,6 +3,8 @@
 
 SECTION .text
 
+; CS 세그먼트 레지스터는 mov 대신, jmp 를 이용해 초기화 (다른 세그먼트 레지스터는 mov 로 처리 가능)
+; Initialize CS segment to 0x07c0, and goto START label
 jmp 0x07c0:START
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,6 +24,7 @@ START:
     mov ax, 0xB800 
     mov es, ax ; ES = 0xB800 * 16 = 0xB8000
 
+    ; 0x0001:0000 부터 OS 이미지 로딩됨
     ; Create Stack 0x0000:0000 ~ 0x0000:FFFF, 64KB 
     mov ax, 0x0000
     mov ss, ax
@@ -121,7 +124,7 @@ READEND:
 HANDLEDISKERROR:
     push DISKERRORMESSAGE
     push 1
-    push 20
+    push 20`
     call PRINTMESSAGE
     
     jmp $
@@ -190,6 +193,13 @@ SECTORNUMBER:   db  0x02
 HEADNUMBER:     db  0x00
 TRACKNUMBER:    db  0x00
 
+; 부트섹터(총 512바이트) 의 마지막 2바이트(511, 512) 는 각 0x55, 0xAA 를 저장해야함 
+; 0x55, 0xAA 를 해당 위치에 저장하면, 부트로더임을 알릴수 있음.
+; times: times 뒤에 오는 횟수만큼 반복 작업 
+; $: 현재 위치 / $$ 현재 섹션(.text) 시작 주소 
+; ( $ - $$ ) : 현재 섹션(.text) 기준 현재 위치까지의 오프셋 
+; 메모리 0x00 부터 .text 섹션이고, 511 부터 0x55, 0xAA 를 작성해야 하니까 
+; 지금까지 사용한 만큼 제외하고 510 에서 오프셋 만큼 빼버려 나머지를 0x00 으로 채운다.
 times   510 - ( $ - $$ )    db  0x00
 db  0x55
 db  0xAA

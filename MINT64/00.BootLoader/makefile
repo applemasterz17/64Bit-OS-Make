@@ -4,4 +4,4 @@ BootLoader.bin: BootLoader.asm
 	nasm -o BootLoader.bin BootLoader.asm
 
 clean:
-	rm -f Bootloader.bin
+	rm -f BootLoader.bin
