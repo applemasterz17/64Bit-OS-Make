@@ -62,7 +62,7 @@ RESETDISK:
     int 0x13
     jc HANDLEDISKERROR
 
-    ; Set Destination Address to ES segment
+    ; Set Destination [Memory Address] to [ES Segment Register]
     mov si, 0x1000
     mov es, si
     mov bx, 0x0000
@@ -95,11 +95,11 @@ READDATA:
     cmp al, 19
     jl READDATA
 
-    ; IF Sector Num is 19, Toggle Head, Sector Num Set 1 
+    ; If Sector Num is 19, Toggle Head, Sector Num Set 1 
     xor byte [ HEADNUMBER ], 0x01
     mov byte [ SECTORNUMBER ], 0x01
 
-    ; IF Head Change 1->0, Change Track 
+    ; If Head Change 1->0, Change Track 
     cmp byte [ HEADNUMBER ], 0x00
     jne READDATA
 
