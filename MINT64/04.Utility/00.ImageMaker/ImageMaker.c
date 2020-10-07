@@ -14,20 +14,21 @@ int CopyFile(int iSourceFd, int iTargetFd);
 
 int main(int argc, char *argv[])
 {
-    int iSourceFd;
-    int iTargetFd;
-    int iBootLoaderSize;
+    int iSourceFd; // 이미 생성된 .bin 파일의 FD  
+    int iTargetFd; // Disk.img 의 FD  
+    int iBootLoaderSize; // 부트 로더의 크기 
     int iKernel32SectorCount;
     int iSourceSize;
 
-    // Check 3 Options
+    //--------------------------------------------------------------------------
+    // Check Argument, Create "Disk.img"
+    //--------------------------------------------------------------------------
     if (argc < 3)
     {
         fprintf(stderr, "[ERROR] ImageMaker BootLoader.bin Kernel32.bin\n");
         exit(-1);
     }
 
-    // Create Disk.img File
     if ((iTargetFd = open("Disk.img", O_RDWR | O_CREAT | O_TRUNC | S_IREAD | S_IWRITE)) == -1)
     {
         fprintf(stderr, "[ERROR] Disk.img open fail.\n");
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 
     // Fill Remain Sector, 512 align
     iKernel32SectorCount = AdjustInSectorSize(iTargetFd, iSourceSize);
-    printf("[INFO] %s size = [%d] and sector count = [%d]\n", argv[1], iSourceSize, iKernel32SectorCount);
+    printf("[INFO] %s size = [%d] and sector count = [%d]\n", argv[2], iSourceSize, iKernel32SectorCount);
 
     //--------------------------------------------------------------------------
     // Renewal Kernel Information in Disk.img
