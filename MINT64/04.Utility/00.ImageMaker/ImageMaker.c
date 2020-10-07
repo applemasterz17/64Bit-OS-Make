@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
     int iSourceFd; // 이미 생성된 .bin 파일의 FD  
     int iTargetFd; // Disk.img 의 FD  
     int iBootLoaderSize; // 부트 로더의 크기 
-    int iKernel32SectorCount;
-    int iSourceSize;
+    int iKernel32SectorCount; // 32비트 커널의 섹터 수 
+    int iSourceSize; // 복사 할때, src 에서 읽어온 크기 
 
     //--------------------------------------------------------------------------
     // Check Argument, Create "Disk.img"
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     printf("[INFO] %s size = [%d] and sector count = [%d]\n", argv[2], iSourceSize, iKernel32SectorCount);
 
     //--------------------------------------------------------------------------
-    // Renewal Kernel Information in Disk.img
+    // Renewal Kernel Information in Disk.img (Update Sector Count)
     //--------------------------------------------------------------------------
     printf("[INFO] Start to write kernel information\n");
     WriteKernelInformation(iTargetFd, iKernel32SectorCount);
@@ -147,10 +147,13 @@ int CopyFile(int iSourceFd, int iTargetFd)
         }
         iSourceFileSize += iRead;
 
+        // 만약 src 에서 읽어온 크기가 512 랑 다르다면, 
+        // 한 섹터(512) 보다 적게 읽어온 것이므로 반복문 탈출 
         if (iRead != sizeof(vcBuffer))
         {
             break;
         }
     }
+    // 총 읽어온 크기를 리턴 
     return iSourceFileSize;
 }
