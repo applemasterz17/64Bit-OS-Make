@@ -162,4 +162,5 @@ GDTEND:
 
 SWITCHSUCCESSMESSAGE: db 'Switch To Protected Mode Success !!', 0
 
+; 섹터 나머지 부분을 채움 
 times 512 - ( $ - $$ ) db 0x00
