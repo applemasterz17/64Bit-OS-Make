@@ -4,7 +4,7 @@
 SECTION .text
 
 ; CS 세그먼트 레지스터는 mov 대신, jmp 를 이용해 초기화 (다른 세그먼트 레지스터는 mov 로 처리 가능)
-; Initialize CS segment to 0x07c0, and goto START label
+; Initialize CS segment to 0x07c0(0x7c00), and goto START label
 jmp 0x07c0:START
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -36,7 +36,7 @@ START:
 .SCREENCLEARLOOP:
     ; Start Screen Clearing 
     mov byte [ es: si ], 0
-    mov byte [ es: si + 1 ], 0x0B
+    mov byte [ es: si + 1 ], 0x40
     add si, 2
     cmp si, 80 * 25 * 2
     jl .SCREENCLEARLOOP
