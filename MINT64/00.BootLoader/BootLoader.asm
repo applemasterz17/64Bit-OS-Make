@@ -36,7 +36,7 @@ START:
 .SCREENCLEARLOOP:
     ; Start Screen Clearing 
     mov byte [ es: si ], 0
-    mov byte [ es: si + 1 ], 0x50
+    mov byte [ es: si + 1 ], 0x70
     add si, 2
     cmp si, 80 * 25 * 2
     jl .SCREENCLEARLOOP
