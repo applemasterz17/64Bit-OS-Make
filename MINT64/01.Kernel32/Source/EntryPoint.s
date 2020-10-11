@@ -147,7 +147,7 @@ GDT:
         dw 0x0000 ; Base [15:0]                          (2byte)
         db 0x00 ; Base [23:16]                           (1byte)
         db 0x9A ; P=1, DPL=0, Code Segment:Execute/Read  (1byte)
-        db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
+        db 0xCF ; G=1, D/B=1, L=0, Limit [19:16]         (1byte)
         db 0x00 ; Base [31:24]                           (1byte)
 
     DATADESCRIPTOR:
@@ -156,7 +156,7 @@ GDT:
         dw 0x0000 ; Base [15:0]                          (2byte)
         db 0x00 ; Base [23:16]                           (1byte)
         db 0x92 ; P=1, DPL=0, Data Segment:Read/Write    (1byte)
-        db 0xCF ; G=1, D=1, L=0, Limit [19:16]           (1byte)
+        db 0xCF ; G=1, D/B=1, L=0, Limit [19:16]         (1byte)
         db 0x00 ; Base [31:24]                           (1byte)
 GDTEND:
 

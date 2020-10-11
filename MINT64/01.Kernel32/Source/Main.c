@@ -33,7 +33,6 @@ typedef struct pageTableEntryStruct
 ///////////////////////////////////////////////////////////////////////////
 void Main(void)
 {
-
     DWORD i;
 
     kPrintString(0, 3, "C Language Kernel Start.....................[Pass]");
