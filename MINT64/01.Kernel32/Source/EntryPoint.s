@@ -7,7 +7,7 @@ SECTION .text
 ;   Code Section 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 START:
-    mov ax, 0x1000
+    mov ax, 0x1000 ; 보호 모드 엔트리 포인트 시작 주소(0x10000) DS, ES 에 세팅
     mov ds, ax 
     mov es, ax 
 
@@ -41,11 +41,12 @@ START:
 
     ; 커널 코드 세그먼트를 0x00을 기준으로 하는 것으로 교체하고 EIP의 값을 0x00을 기준으로 재설정
     ; CS 세그먼트 셀렉터 : EIP
+    ; CS 셀렉터에 코드 디스크립터 오프셋 세팅(0x08)
     jmp dword 0x08: ( PROTECTEDMODE - $$ + 0x10000 )
 
 [BITS 32]
 PROTECTEDMODE:
-    mov ax, 0x10
+    mov ax, 0x10 ; 보호 모드 커널용 데이터 세그먼트 디스크립터를 DS, ES, FS, GS 에 세팅
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -128,9 +129,9 @@ align 8, db 0
 dw 0x0000
 
 GDTR:
-    dw GDTEND - GDT - 1 ; Size 
-    dd ( GDT - $$ + 0x10000 ) ; 32bit Base Address 
-                              ; GDT Linear Address - Curr + Physical Address 
+    dw GDTEND - GDT - 1         ; Size 
+    dd ( GDT - $$ + 0x10000 )   ; 32bit Base Address 
+                                ; GDT Linear Address - Curr + Physical Address 
 
 GDT:
     NULLDescriptor:
