@@ -1,35 +1,13 @@
 #include "Types.h"
+#include "Page.h"
 
 void kPrintString(int iX, int iY, const char *pcString);    // 메시지 출력 함수 (CUI)
 BOOL kInitializeKernel64Area(void);                         // IA-32e 커널이 올라갈 공간을 0으로 초기화 하는 함수
 BOOL kIsMemoryEnough(void);                                 // 보호모드 설치된 메모리 크기 검사 함수 (4GB)
 
-///////////////////////////////////////////////////////////////////////////
-//                              페이징에 사용                               //
-///////////////////////////////////////////////////////////////////////////
-// 페이지 엔트리 : 하위 32비트 용 속성 필드
-#define PAGE_FLAGS_P 0x00000001                             // Present
-#define PAGE_FLAGS_US 0x00000004                            // User/Supervisor
-#define PAGE_FLAGS_PWT 0x00000008                           // Page Level Write-through
-#define PAGE_FLAGS_PCD 0x00000010                           // Page Level Cache Disable
-#define PAGE_FLAGS_A 0x00000020                             // Accessed
-#define PAGE_FLAGS_D 0x00000040                             // Dirty
-#define PAGE_FLAGS_PS 0x00000080                            // Page Size
-#define PAGE_FLAGS_G 0x00000100                             // Global
-#define PAGE_FLAGS_PAT 0x0001000                            // Page Attribute Table Index
-#define PAGE_FLAGS_EXB 0x80000000                           // Excute Disable, 상위 32비트 속성 필드
-#define PAGE_FLAGS_DEFAULT (PAGE_FLAGS_P | PAGE_FLAGS_RW)   // 기타
-
-// 페이지 엔트리 : 자료구조
-typedef struct pageTableEntryStruct
-{
-    DWORD dwAttributeAndLowerBaseAddress;                   // Addr + G + PAT + D + A + PCD + PWT + U/S + R/W + P
-    DWORD dwUpperBaseAddressAndEXB;                         // Addr + EXB
-} PML4TENTRY, PDPTENTRY, PDENTRY, PTENTRY;
-
 
 ///////////////////////////////////////////////////////////////////////////
-//                              메인 함수                                  //
+//                              메인                                      //
 ///////////////////////////////////////////////////////////////////////////
 void Main(void)
 {
@@ -64,6 +42,11 @@ void Main(void)
     {
         kPrintString(45, 5, "Pass");
     }
+
+    // [3] Create IA-32e Kernel Page Table 
+    kPrintString(0, 6, "IA-32e Page Tables Initialize...............[    ]");
+    kInitializePageTables();
+    kPrintString(45, 6, "Pass");
 
     while (1)
         ;
