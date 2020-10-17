@@ -7,20 +7,19 @@ SECTION .text
 ;   Code Section 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 START:
-    mov ax, 0x1000 ; 보호 모드 엔트리 포인트 시작 주소(0x10000) DS, ES 에 세팅
+    ; Protected Mode Entry Point Address(0x10000) Set DS, ES 
+    mov ax, 0x1000 
     mov ds, ax 
     mov es, ax 
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ; Turn On A20 Gate 
-    ; If Failed BIOS, Try System Control Port 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Turn On A20 Gate, BIOS Service 
     mov ax, 0x2401
     int 0x15
     jc .A20GATEERROR
     jmp .A20GATESUCCESS
 
 .A20GATEERROR:
+    ; If BIOS Service Failed, Use System Control Port 
     in al, 0x92
     or al, 0x02
     and al, 0xFE
