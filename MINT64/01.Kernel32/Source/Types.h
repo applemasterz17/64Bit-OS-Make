@@ -12,13 +12,11 @@
 #define NULL 0
 
 #pragma pack(push, 1) // 구조체 1바이트 정렬
-
 typedef struct kCharactorStruct
 {
     BYTE bCharactor;
     BYTE bAttribute;
 } CHARACTER;
-
 #pragma pack(pop)
 
 #endif /*__TYPES_H__*/
