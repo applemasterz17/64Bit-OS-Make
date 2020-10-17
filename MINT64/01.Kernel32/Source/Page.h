@@ -27,7 +27,7 @@ typedef struct kPageTableEntryStruct
     DWORD dwAttributeAndLowerBaseAddress;                   // Addr + G + PAT + D + A + PCD + PWT + U/S + R/W + P
     DWORD dwUpperBaseAddressAndEXB;                         // Addr + EXB
 } PML4TENTRY, PDPTENTRY, PDENTRY, PTENTRY;
-#pragma pack(pop, 1)
+#pragma pack(pop)
 
 // Paging Function 
 void kInitializePageTables(void);
