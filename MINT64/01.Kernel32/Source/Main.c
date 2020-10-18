@@ -56,7 +56,7 @@ void Main(void)
     *(DWORD *)vcVendorString = dwEBX;
     *((DWORD *)vcVendorString + 1) = dwEDX;
     *((DWORD *)vcVendorString + 2) = dwECX;
-    kPrintString(0, 7, "Processor Vendor String.....................[            ]");
+    kPrintString(0, 7, "Processor Vendor String.....................[           ]");
     kPrintString(45, 7, vcVendorString);
 
     // [5] Is Able To Change 64bit ?? 
