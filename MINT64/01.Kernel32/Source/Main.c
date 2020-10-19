@@ -5,10 +5,11 @@
 void kPrintString(int iX, int iY, const char *pcString);    // 메시지 출력 함수 (CUI)
 BOOL kInitializeKernel64Area(void);                         // IA-32e 커널이 올라갈 공간을 0으로 초기화 하는 함수
 BOOL kIsMemoryEnough(void);                                 // 보호모드 설치된 메모리 크기 검사 함수 (4GB)
+void kCopyKernel64ImageTo2MByte(void);                      // IA-32e 커널을 0x200000(2MB) 영역으로 복사 
 
 
 ///////////////////////////////////////////////////////////////////////////
-//                              메인                                      //
+//                              Main                                     //
 ///////////////////////////////////////////////////////////////////////////
 void Main(void)
 {
@@ -16,9 +17,9 @@ void Main(void)
     DWORD dwEAX, dwEBX, dwECX, dwEDX;
     char vcVendorString[13] = {0, };
 
-    kPrintString(0, 3, "C Language Kernel Start.....................[Pass]");
+    kPrintString(0, 3, "Protected Mode C Language Kernel Start......[Pass]");
 
-    // [1] Check Minimum Memory Size : 설치된 메모리 크기 검사 (4GB)
+    // [1] 최소 메모리 크기를 만족하는지 검사
     kPrintString(0, 4, "Minimum Memory Size Check...................[    ]");
     if (kIsMemoryEnough() == FALSE)
     {
@@ -32,26 +33,25 @@ void Main(void)
         kPrintString(45, 4, "Pass");
     }
 
-    // [2] Initialize IA-32e Kernel Area : IA-32e 영역 초기화
+    // [2] IA-32e 커널 영역을 초기화 (1MB~2MB 커널 자료구조 공간 포함)
     kPrintString(0, 5, "IA-32e Kernel Area Initialize...............[    ]");
     if (kInitializeKernel64Area() == FALSE)
     {
         kPrintString(45, 5, "Fail");
         kPrintString(0, 6, "Kernel Area Initialization Fail!!");
-        while (1)
-            ;
+        while (1) ;
     }
     else
     {
         kPrintString(45, 5, "Pass");
     }
 
-    // [3] Create IA-32e Kernel Page Table 
+    // [3] IA-32e 커널을 위한 페이지 테이블 생성  
     kPrintString(0, 6, "IA-32e Page Tables Initialize...............[    ]");
     kInitializePageTables();
     kPrintString(45, 6, "Pass");
 
-    // [4] Read Process Maker's Information
+    // [4] 프로세서 제조사 정보 읽어오기 
     kReadCPUID(0x00, &dwEAX, &dwEBX, &dwECX, &dwEDX);
     *(DWORD *)vcVendorString = dwEBX;
     *((DWORD *)vcVendorString + 1) = dwEDX;
@@ -59,7 +59,7 @@ void Main(void)
     kPrintString(0, 7, "Processor Vendor String.....................[            ]");
     kPrintString(45, 7, vcVendorString);
 
-    // [5] Is Able To Change 64bit ?? 
+    // [5] 64비트(IA-32e) 지원 유무 확인 
     kReadCPUID(0x80000001, &dwEAX, &dwEBX, &dwECX, &dwEDX);
     kPrintString(0, 8, "64bit Mode Support Check....................[    ]");
     if(dwEDX & (1 << 29))
@@ -70,21 +70,24 @@ void Main(void)
     {
         kPrintString(45, 8, "Fail");
         kPrintString(0, 9, "This processor does not support 64bit mode~!!");
-        while(1)
-            ;
+        while(1) ;
     }
 
-    // [6] Change IA-32e Mode
-    kPrintString(0, 9, "Switch To IA-32e Mode");
-    // kSwitchAndExecute64bitKernel();
+    // [6] IA-32e 커널을 0x200000(2M) 영역으로 이동 
+    kPrintString(0, 9, "Copy IA-32e Kernel To 2M Address............[    ]");
+    kCopyKernel64ImageTo2MByte();
+    kPrintString(45, 9, "Pass");
 
-    while (1)
-        ;
+    // [7] IA-32e 모드로 전환 
+    kPrintString(0, 9, "Switch To IA-32e Mode");
+    kSwitchAndExecute64bitKernel();
+
+    while (1) ;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
-//                              함수 영역                                  //
+//                              Function                                 //
 ///////////////////////////////////////////////////////////////////////////
 void kPrintString(int iX, int iY, const char *pcString)
 {
@@ -135,4 +138,24 @@ BOOL kIsMemoryEnough(void)
         pdwCurrentAddress += (0x100000 / 4);
     }
     return TRUE;
+}
+
+void kCopyKernel64ImageTo2MByte(void)
+{
+    WORD wKernel32SectorCount, wTotalKernelSectorCount;
+    DWORD* pdwSourceAddress, * pdwDestinationAddress;
+    int i;
+
+    wTotalKernelSectorCount = *((WORD *)0x7C05);
+    wKernel32SectorCount = *((WORD *)0x7C07);
+
+    pdwSourceAddress = (DWORD *)(0x10000 + (wKernel32SectorCount * 512));
+    pdwDestinationAddress = (DWORD *) 0x200000;
+
+    for(i = 0; i < 512 * (wTotalKernelSectorCount - wKernel32SectorCount) / 4; i++)
+    {
+        *pdwDestinationAddress = *pdwSourceAddress;
+        pdwDestinationAddress++;
+        pdwSourceAddress++;
+    }
 }

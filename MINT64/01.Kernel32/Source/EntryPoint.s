@@ -45,7 +45,8 @@ START:
 
 [BITS 32]
 PROTECTEDMODE:
-    mov ax, 0x20 ; 보호 모드 커널용 데이터 세그먼트 디스크립터를 DS, ES, FS, GS 에 세팅
+    ; 보호 모드 커널용 데이터 세그먼트 디스크립터를 DS, ES, FS, GS 에 세팅
+    mov ax, 0x20 
     mov ds, ax
     mov es, ax
     mov fs, ax

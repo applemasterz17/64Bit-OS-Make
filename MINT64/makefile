@@ -18,11 +18,20 @@ Kernel32:
 	@echo ========== Build Complete ==========
 	@echo
 
-Disk.img: BootLoader Kernel32
+Kernel64:
+	@echo
+	@echo ========== Build 64bit Kernel ==========
+	@echo
+	make -C 02.Kernel64
+	@echo
+	@echo ========== Build Complete ==========
+	@echo
+
+Disk.img: BootLoader Kernel32 Kernel64
 	@echo
 	@echo ========== Disk Image Build Start ==========
 	@echo
-	./ImageMaker 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin
+	./ImageMaker 00.BootLoader/BootLoader.bin 01.Kernel32/Kernel32.bin 02.Kernel64/Kernel64.bin
 	chmod 777 ./Disk.img
 	@echo
 	@echo ========== All Build Complete ==========
@@ -31,5 +40,6 @@ Disk.img: BootLoader Kernel32
 clean:
 	make -C 00.BootLoader clean
 	make -C 01.Kernel32 clean
+	make -C 02.Kernel64 clean
 	rm -rf Disk.img
 
