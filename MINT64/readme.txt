@@ -1,0 +1,31 @@
+- 컴파일 
+부트로더:
+    BootLoader.asm 
+
+보호 모드 커널: 
+    EntryPoint.s
+    Main.c 
+        Types.h
+        Page.c / Page.h
+        ModeSwitch.asm / ModeSwitch.h 
+
+IA-32e 모드 커널:
+    EntryPoint.ModeSwitch
+    Main.c
+        Types.h
+
+- 실행 
+    위 컴파일 된 파일을 ImageMaker 를 통해 Disk.img 파일로 합친다.
+    Disk.img 파일은 이미지 파일로써, QEMU 를 통해 부팅 시킨다. 
+    QEMU 는 첫번째 섹터(MBR, 0x200 크기) 의 마지막 두 바이트 0x55 0xaa 를 확인하고 부트로더임을 확인한다.
+
+- 부트로더에서 동작
+    CS 세그먼트 레지스터 0x07C0(0x7C00) 으로 세팅 
+
+    (현재주소 0x7C00)
+    DS 세그먼트 레지스터 0x07C0(0x7C00) 으로 세팅
+    ES 세그먼트 레지스터 0xB800(0xB8000) 으로 세팅 
+    스택을 0x0000:0000 ~ 0x0000:FFFF 주소에 구성 
+
+    ES 세그먼트 레지스터에 저장된 비디오 메모리 주소를 참조해 스크린 지우기
+    ES 세그먼트 레지스터에 저장된 비디오 메모리 주소를 참조해 부팅문구 출력
