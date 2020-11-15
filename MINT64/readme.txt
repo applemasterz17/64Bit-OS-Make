@@ -3,15 +3,15 @@
     BootLoader.asm 
 
 보호 모드 커널: 
-    EntryPoint.s
-    Main.c 
+    - EntryPoint.s
+    - Main.c 
         Types.h
         Page.c / Page.h
         ModeSwitch.asm / ModeSwitch.h 
 
 IA-32e 모드 커널:
-    EntryPoint.ModeSwitch
-    Main.c
+    - EntryPoint.s
+    - Main.c
         Types.h
 
 - 실행 
