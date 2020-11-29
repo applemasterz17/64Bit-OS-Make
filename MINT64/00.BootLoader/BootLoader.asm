@@ -19,11 +19,12 @@ KERNEL32SECTORCOUNT: dw 0x02
 
 ;;;;; Start Real Mode ;;;;;
 START:
-    ; Initialize DS segment(boot loader), ES segment(video memory)
+    ; DS 세그먼트 레지스터 0x07C0(0x7C00) 으로 세팅
     mov ax, 0x07C0 
-    mov ds, ax ; DS = 0x07C0 * 16 = 0x7C00
+    mov ds, ax
+    ; ES 세그먼트 레지스터 0xB800(0xB8000) 으로 세팅 (비디오 메모리)
     mov ax, 0xB800 
-    mov es, ax ; ES = 0xB800 * 16 = 0xB8000
+    mov es, ax
 
     ; 0x0001:0000 부터 OS 이미지 로딩됨
     ; Create Stack 0x0000:0000 ~ 0x0000:FFFF, 64KB 
